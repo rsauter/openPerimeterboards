@@ -11,7 +11,7 @@ import { createZip } from '../src/lib/zip.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PORT = Number(process.env.PORT) || 3001
 const MAX_UPLOAD_MB = Number(process.env.MAX_UPLOAD_MB) || 25
-const VERSION = '0.7.2'
+const VERSION = '0.7.3'
 
 // The server is stateless: uploads are held in memory only for the duration of a request.
 const app = express()

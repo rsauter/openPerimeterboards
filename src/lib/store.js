@@ -17,6 +17,7 @@ function defaultBanner() {
   return {
     id: newProjectId(),
     name: 'New banner',
+    unit: 'px', // display unit: 'px' | 'mm' (geometry is always stored in px)
     width: 300,
     height: 250,
     background: '#0f172a',
@@ -206,10 +207,19 @@ export function moveLayer(id, dir) {
   els.splice(j, 0, el)
 }
 
+export const MAX_SIZE_PX = 20000
+
 export function setSize(width, height, mmPerPx) {
   if (mmPerPx) banner.print.mmPerPx = mmPerPx
-  banner.width = Math.max(1, Math.min(4000, Math.round(width)))
-  banner.height = Math.max(1, Math.min(4000, Math.round(height)))
+  const clamp = (v) => Math.max(1, Math.min(MAX_SIZE_PX, Math.round(v * 100) / 100))
+  banner.width = clamp(width)
+  banner.height = clamp(height)
+}
+
+/** Switch display unit. First switch to mm without a print scale uses 1 px = 1 mm. */
+export function setUnit(unit) {
+  if (unit === 'mm' && !banner.print.mmPerPx) banner.print.mmPerPx = 1
+  banner.unit = unit
 }
 
 // ------------------------------------------------------------------ undo / redo + autosave

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { banner, selected, duplicateElement, removeElement, moveLayer } from '../lib/store.js'
 import { FONT_FAMILIES, FONT_WEIGHTS } from '../lib/presets.js'
 import ColorField from './ColorField.vue'
+import { isMm, lenUnit, fontUnit, unitModel, lenToDisplay, lenFromDisplay } from '../lib/units.js'
 import { assetMeta, putAsset, assetFromUpload } from '../lib/assets.js'
 import { convertVector } from '../lib/api.js'
 import { ref } from 'vue'
@@ -40,16 +41,20 @@ async function replaceFile(e) {
 import NumberField from './NumberField.vue'
 
 const el = selected
+const xModel = unitModel(() => el.value, 'x')
+const yModel = unitModel(() => el.value, 'y')
+const fontModel = unitModel(() => el.value, 'fontSize', 'font')
+const spacingModel = unitModel(() => el.value, 'letterSpacing', 'font')
 
 const ratio = computed(() => (el.value?.type === 'graphic' ? el.value.naturalHeight / el.value.naturalWidth : 1))
 
 function setWidth(v) {
-  el.value.width = Math.max(1, Math.round(v))
-  if (el.value.keepRatio !== false) el.value.height = Math.max(1, Math.round(v * ratio.value))
+  el.value.width = Math.max(0.1, Math.round(v * 100) / 100)
+  if (el.value.keepRatio !== false) el.value.height = Math.max(0.1, Math.round(v * ratio.value * 100) / 100)
 }
 function setHeight(v) {
-  el.value.height = Math.max(1, Math.round(v))
-  if (el.value.keepRatio !== false) el.value.width = Math.max(1, Math.round(v / ratio.value))
+  el.value.height = Math.max(0.1, Math.round(v * 100) / 100)
+  if (el.value.keepRatio !== false) el.value.width = Math.max(0.1, Math.round((v / ratio.value) * 100) / 100)
 }
 function resetSize() {
   el.value.width = Math.round(el.value.naturalWidth)
@@ -101,7 +106,7 @@ function centerV() {
       <div class="grid grid-cols-2 gap-2">
         <fieldset class="fieldset py-1">
           <legend class="fieldset-legend py-1">Font size</legend>
-          <NumberField v-model="el.fontSize" label="A" :min="4" :max="1000" suffix="px" />
+          <NumberField v-model="fontModel" label="A" :min="0.5" :max="100000" :step="isMm ? 0.5 : 1" :suffix="fontUnit" />
         </fieldset>
         <fieldset class="fieldset py-1">
           <legend class="fieldset-legend py-1">Weight</legend>
@@ -110,7 +115,7 @@ function centerV() {
           </select>
         </fieldset>
       </div>
-      <input v-model.number="el.fontSize" type="range" min="6" max="200" class="range range-xs range-primary w-full" />
+      <input v-model.number="el.fontSize" type="range" min="1" :max="Math.max(200, Math.round(banner.height))" class="range range-xs range-primary w-full" />
 
       <fieldset class="fieldset py-1">
         <legend class="fieldset-legend py-1">Font</legend>
@@ -141,7 +146,7 @@ function centerV() {
         </fieldset>
         <fieldset class="fieldset py-1">
           <legend class="fieldset-legend py-1">Letter spacing</legend>
-          <NumberField v-model="el.letterSpacing" label="↔" :min="-20" :max="100" :step="0.5" suffix="px" />
+          <NumberField v-model="spacingModel" label="↔" :min="-1000" :max="1000" :step="0.5" :suffix="fontUnit" />
         </fieldset>
       </div>
     </template>
@@ -168,15 +173,15 @@ function centerV() {
       <fieldset class="fieldset py-1">
         <legend class="fieldset-legend py-1">Size</legend>
         <div class="flex items-center gap-1">
-          <NumberField :model-value="el.width" label="W" :min="1" suffix="px" @update:model-value="setWidth" />
+          <NumberField :model-value="lenToDisplay(el.width)" label="W" :min="0.1" :step="isMm ? 0.1 : 1" :suffix="lenUnit" @update:model-value="(v) => setWidth(lenFromDisplay(v))" />
           <button class="btn btn-ghost btn-xs px-1" :class="{ 'text-primary': el.keepRatio !== false }" :title="el.keepRatio !== false ? 'Aspect ratio locked' : 'Aspect ratio free'" @click="el.keepRatio = el.keepRatio === false">
             {{ el.keepRatio !== false ? '🔗' : '⛓︎' }}
           </button>
-          <NumberField :model-value="el.height" label="H" :min="1" suffix="px" @update:model-value="setHeight" />
+          <NumberField :model-value="lenToDisplay(el.height)" label="H" :min="0.1" :step="isMm ? 0.1 : 1" :suffix="lenUnit" @update:model-value="(v) => setHeight(lenFromDisplay(v))" />
         </div>
         <div class="mt-1 flex gap-1">
           <button class="btn btn-xs" @click="fitBanner">Fit banner</button>
-          <button class="btn btn-xs" @click="resetSize">Original size ({{ Math.round(el.naturalWidth) }}×{{ Math.round(el.naturalHeight) }})</button>
+          <button class="btn btn-xs" @click="resetSize">Original size</button>
         </div>
       </fieldset>
     </template>
@@ -185,8 +190,8 @@ function centerV() {
     <fieldset class="fieldset py-1">
       <legend class="fieldset-legend py-1">Position</legend>
       <div class="flex items-center gap-1">
-        <NumberField v-model="el.x" label="X" suffix="px" />
-        <NumberField v-model="el.y" label="Y" suffix="px" />
+        <NumberField v-model="xModel" label="X" :step="isMm ? 0.1 : 1" :suffix="lenUnit" />
+        <NumberField v-model="yModel" label="Y" :step="isMm ? 0.1 : 1" :suffix="lenUnit" />
       </div>
       <div class="mt-1 flex gap-1">
         <button class="btn btn-xs" @click="centerH">Center horizontally</button>

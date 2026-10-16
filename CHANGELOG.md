@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.3 — 2026-10-16
+
+### Added
+- **Unit switch px / mm** for the banner size (Banner → Size). In mm mode, positions and
+  element sizes are shown in mm, font size and letter spacing in pt — based on the print scale
+  (first switch to mm uses 1 px = 1 mm; the scale can be changed in *PDF for print*)
+- Print size presets switch to mm automatically, web presets to px
+- Banner size up to 20 000 px (e.g. 4 m perimeter boards at 1 px = 1 mm)
+
 ## 0.7.2 — 2026-10-16
 
 ### Added
