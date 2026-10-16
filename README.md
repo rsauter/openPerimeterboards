@@ -2,7 +2,7 @@
 
 Small web app to compose ad banners in individual sizes — **Node.js · Vue 3 · Tailwind CSS 4 · DaisyUI 5**.
 
-Version **0.7.2** · License **AGPL-3.0-or-later** (see [CHANGELOG](CHANGELOG.md)).
+Version **0.8.0** · License **AGPL-3.0-or-later** (see [CHANGELOG](CHANGELOG.md)).
 
 ## Features (v0.5)
 
@@ -33,6 +33,14 @@ Production-like:
 npm run build
 npm start          # serves app + API on http://localhost:3001
 ```
+
+## Languages
+
+The UI is available in **German, French, Italian and English** (switcher in the top bar; default = browser language).
+
+- Texts: `src/i18n/{de,fr,it,en}.js` — same keys in every file, `{placeholder}` interpolation, English is the fallback.
+- Server error messages: `server/i18n.js`, selected via the `Accept-Language` header the app sends.
+- Add a language: copy `en.js`, translate, register it in `src/i18n/index.js` (`MESSAGES`, `LOCALES`) and in `server/i18n.js`.
 
 ## Projects & storage
 
@@ -121,6 +129,7 @@ server/
   converters.js     SVG sanitizing, PDF/AI (MuPDF), EPS (Ghostscript)
   pdf.js            Print PDF: PDFKit layers + embedded originals (pdf-lib), bleed, crop marks, Ghostscript pass
   fonts.js          Maps CSS font families to installed TTF files for embedding
+  i18n.js           Localized server error messages
 src/
   App.vue           Layout, toolbar, export, shortcuts, toasts
   components/       BannerCanvas, BannerSettings, ElementProperties,
@@ -132,6 +141,8 @@ src/
     assets.js       Original uploads + previews (IndexedDB), migration of inline SVGs
     projects.js     Project list, .adbanner read/write
     zip.js          Minimal ZIP reader/writer (browser + server)
+    units.js        px / mm / pt display units
+  i18n/             UI translations (de, fr, it, en) + t() helper
     render.js       Shared geometry + SVG serialization (editor = export)
     export.js       PNG/JPG/SVG/project export
     presets.js      Banner sizes, fonts, swatches

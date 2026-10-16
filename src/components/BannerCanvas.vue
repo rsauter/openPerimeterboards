@@ -205,7 +205,7 @@ defineExpose({ svgEl })
               @pointerdown="onElementDown($event, el)"
             >
               <rect :x="el.x" :y="el.y" :width="el.width" :height="el.height" fill="rgba(239,68,68,.15)" stroke="#ef4444" :stroke-width="1.5 / scale" :stroke-dasharray="`${6 / scale} ${4 / scale}`" />
-              <text :x="el.x + el.width / 2" :y="el.y + el.height / 2" text-anchor="middle" dominant-baseline="middle" fill="#ef4444" :font-size="Math.max(8, Math.min(el.width / 8, 14 / scale))" font-family="sans-serif">graphic missing</text>
+              <text :x="el.x + el.width / 2" :y="el.y + el.height / 2" text-anchor="middle" dominant-baseline="middle" fill="#ef4444" :font-size="Math.max(8, Math.min(el.width / 8, 14 / scale))" font-family="sans-serif">{{ t('canvas.missing') }}</text>
             </g>
             <text
               v-else-if="el.type === 'text' && el.visible !== false"
@@ -247,7 +247,7 @@ defineExpose({ svgEl })
             class="cursor-nwse-resize"
             @pointerdown="onHandleDown"
           >
-            <title>{{ selected.type === 'text' ? 'Drag to change font size' : 'Drag to resize (Shift = free ratio)' }}</title>
+            <title>{{ selected.type === 'text' ? t('canvas.handleText') : t('canvas.handleGraphic') }}</title>
           </rect>
         </g>
       </svg>

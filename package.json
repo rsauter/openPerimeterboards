@@ -1,6 +1,6 @@
 {
   "name": "adbanner-generator",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "Ad banner generator – Vue 3, DaisyUI, Express",
   "license": "AGPL-3.0-or-later",
   "repository": {

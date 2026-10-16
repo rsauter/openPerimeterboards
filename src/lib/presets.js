@@ -1,34 +1,34 @@
 export const SIZE_PRESETS = [
-  { group: 'IAB Display', label: 'Medium Rectangle', width: 300, height: 250 },
-  { group: 'IAB Display', label: 'Large Rectangle', width: 336, height: 280 },
-  { group: 'IAB Display', label: 'Leaderboard', width: 728, height: 90 },
-  { group: 'IAB Display', label: 'Super Leaderboard', width: 970, height: 90 },
-  { group: 'IAB Display', label: 'Billboard', width: 970, height: 250 },
-  { group: 'IAB Display', label: 'Wide Skyscraper', width: 160, height: 600 },
-  { group: 'IAB Display', label: 'Half Page', width: 300, height: 600 },
-  { group: 'Mobile', label: 'Mobile Banner', width: 320, height: 50 },
-  { group: 'Mobile', label: 'Large Mobile Banner', width: 320, height: 100 },
-  { group: 'Mobile', label: 'Mobile Interstitial', width: 320, height: 480 },
-  { group: 'Social', label: 'Link Post / OG Image', width: 1200, height: 628 },
-  { group: 'Social', label: 'Square Post', width: 1080, height: 1080 },
-  { group: 'Social', label: 'Portrait Post', width: 1080, height: 1350 },
-  { group: 'Social', label: 'Story', width: 1080, height: 1920 },
+  { group: 'iab', key: 'mediumRectangle', label: 'Medium Rectangle', width: 300, height: 250 },
+  { group: 'iab', key: 'largeRectangle', label: 'Large Rectangle', width: 336, height: 280 },
+  { group: 'iab', key: 'leaderboard', label: 'Leaderboard', width: 728, height: 90 },
+  { group: 'iab', key: 'superLeaderboard', label: 'Super Leaderboard', width: 970, height: 90 },
+  { group: 'iab', key: 'billboard', label: 'Billboard', width: 970, height: 250 },
+  { group: 'iab', key: 'wideSkyscraper', label: 'Wide Skyscraper', width: 160, height: 600 },
+  { group: 'iab', key: 'halfPage', label: 'Half Page', width: 300, height: 600 },
+  { group: 'mobile', key: 'mobileBanner', label: 'Mobile Banner', width: 320, height: 50 },
+  { group: 'mobile', key: 'largeMobileBanner', label: 'Large Mobile Banner', width: 320, height: 100 },
+  { group: 'mobile', key: 'mobileInterstitial', label: 'Mobile Interstitial', width: 320, height: 480 },
+  { group: 'social', key: 'linkPost', label: 'Link Post / OG Image', width: 1200, height: 628 },
+  { group: 'social', key: 'squarePost', label: 'Square Post', width: 1080, height: 1080 },
+  { group: 'social', key: 'portraitPost', label: 'Portrait Post', width: 1080, height: 1350 },
+  { group: 'social', key: 'story', label: 'Story', width: 1080, height: 1920 },
   // Print presets: 1 px = 1 mm (mmPerPx is used as default for the PDF export)
-  { group: 'Print (1 px = 1 mm)', label: 'A5', width: 148, height: 210, mmPerPx: 1 },
-  { group: 'Print (1 px = 1 mm)', label: 'A4', width: 210, height: 297, mmPerPx: 1 },
-  { group: 'Print (1 px = 1 mm)', label: 'A3', width: 297, height: 420, mmPerPx: 1 },
-  { group: 'Print (1 px = 1 mm)', label: 'A2 Poster', width: 420, height: 594, mmPerPx: 1 },
-  { group: 'Print (1 px = 1 mm)', label: 'DIN lang (DL) Flyer', width: 99, height: 210, mmPerPx: 1 },
-  { group: 'Print (1 px = 1 mm)', label: 'Postcard A6', width: 148, height: 105, mmPerPx: 1 },
-  { group: 'Print (1 px = 1 mm)', label: 'Roll-up 85 × 200 cm', width: 850, height: 2000, mmPerPx: 1 },
+  { group: 'print', key: 'a5', label: 'A5', width: 148, height: 210, mmPerPx: 1 },
+  { group: 'print', key: 'a4', label: 'A4', width: 210, height: 297, mmPerPx: 1 },
+  { group: 'print', key: 'a3', label: 'A3', width: 297, height: 420, mmPerPx: 1 },
+  { group: 'print', key: 'a2', label: 'A2 Poster', width: 420, height: 594, mmPerPx: 1 },
+  { group: 'print', key: 'dl', label: 'DIN lang (DL) Flyer', width: 99, height: 210, mmPerPx: 1 },
+  { group: 'print', key: 'a6', label: 'Postcard A6', width: 148, height: 105, mmPerPx: 1 },
+  { group: 'print', key: 'rollup', label: 'Roll-up 85 × 200 cm', width: 850, height: 2000, mmPerPx: 1 },
 ]
 
 export const DPI_PRESETS = [
-  { label: '1 px = 1 mm', mmPerPx: 1 },
-  { label: '72 dpi (1 px = 1 pt)', mmPerPx: 25.4 / 72 },
-  { label: '96 dpi (screen)', mmPerPx: 25.4 / 96 },
-  { label: '150 dpi', mmPerPx: 25.4 / 150 },
-  { label: '300 dpi', mmPerPx: 25.4 / 300 },
+  { key: 'mm1', label: '1 px = 1 mm', mmPerPx: 1 },
+  { key: 'dpi72', label: '72 dpi (1 px = 1 pt)', mmPerPx: 25.4 / 72 },
+  { key: 'dpi96', label: '96 dpi (screen)', mmPerPx: 25.4 / 96 },
+  { key: 'dpi150', label: '150 dpi', mmPerPx: 25.4 / 150 },
+  { key: 'dpi300', label: '300 dpi', mmPerPx: 25.4 / 300 },
 ]
 
 export const BLEED_PRESETS = [0, 2, 3, 5]
@@ -50,11 +50,11 @@ export const FONT_FAMILIES = [
 ]
 
 export const FONT_WEIGHTS = [
-  { label: 'Light', value: 300 },
-  { label: 'Regular', value: 400 },
-  { label: 'Semibold', value: 600 },
-  { label: 'Bold', value: 700 },
-  { label: 'Black', value: 900 },
+  { key: 'light', label: 'Light', value: 300 },
+  { key: 'regular', label: 'Regular', value: 400 },
+  { key: 'semibold', label: 'Semibold', value: 600 },
+  { key: 'bold', label: 'Bold', value: 700 },
+  { key: 'black', label: 'Black', value: 900 },
 ]
 
 export const COLOR_SWATCHES = [

@@ -9,13 +9,20 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import * as mupdf from 'mupdf'
 import { createHash } from 'node:crypto'
+import { msg } from './i18n.js'
 
 const run = promisify(execFile)
 
 export class ConversionError extends Error {
-  constructor(message, status = 422) {
-    super(message)
+  /** key: message key in server/i18n.js; the English text is used for logs */
+  constructor(key, status = 422, params = {}) {
+    super(msg('en', key, params))
+    this.key = key
+    this.params = params
     this.status = status
+  }
+  localized(lang) {
+    return msg(lang, this.key, this.params)
   }
 }
 
@@ -45,11 +52,7 @@ export async function findGhostscript() {
 async function postscriptToPdf(buffer) {
   const gs = await findGhostscript()
   if (!gs) {
-    throw new ConversionError(
-      'EPS/PostScript requires Ghostscript. Install it (https://ghostscript.com) ' +
-      'or set its path via the GS_PATH environment variable.',
-      501,
-    )
+    throw new ConversionError('gsRequired', 501)
   }
   const dir = await mkdtemp(path.join(tmpdir(), 'adgen-'))
   const input = path.join(dir, 'in.eps')
@@ -64,7 +67,7 @@ async function postscriptToPdf(buffer) {
     return await readFile(output)
   } catch (err) {
     if (err instanceof ConversionError) throw err
-    throw new ConversionError(`Ghostscript could not convert the file: ${err.message.split('\n')[0]}`)
+    throw new ConversionError('gsFailed', 422, { detail: err.message.split('\n')[0] })
   } finally {
     rm(dir, { recursive: true, force: true }).catch(() => {})
   }
@@ -76,14 +79,14 @@ function openPdf(buffer) {
   try {
     return mupdf.Document.openDocument(buffer, 'application/pdf')
   } catch (err) {
-    throw new ConversionError(`Could not read PDF: ${err.message}`)
+    throw new ConversionError('pdfUnreadable', 422, { detail: err.message })
   }
 }
 
 function pdfToSvg(buffer, pageIndex = 0, { previewMaxBytes = Infinity, previewPx = 2400 } = {}) {
   const doc = openPdf(buffer)
   const pageCount = doc.countPages()
-  if (pageCount < 1) throw new ConversionError('Document has no pages.')
+  if (pageCount < 1) throw new ConversionError('noPages')
   const index = Math.min(Math.max(0, pageIndex | 0), pageCount - 1)
   const page = doc.loadPage(index)
   const out = new mupdf.Buffer()
@@ -125,7 +128,7 @@ export function sanitizeSvg(svg) {
     .replace(/(href\s*=\s*["'])\s*javascript:[^"']*(["'])/gi, '$1#$2')
     .trim()
   const start = s.search(/<svg[\s>]/i)
-  if (start < 0) throw new ConversionError('Not a valid SVG file (no <svg> element found).')
+  if (start < 0) throw new ConversionError('invalidSvg')
   s = s.slice(start)
   // ensure namespace (needed when used as data-URI image)
   if (!/<svg[^>]*\sxmlns\s*=/i.test(s)) s = s.replace(/<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"')
@@ -190,11 +193,7 @@ export function detectFormat(buffer, filename) {
 }
 
 function unsupported(ext) {
-  return new ConversionError(
-    ext === 'ai'
-      ? 'AI file without PDF compatibility. Re-save it in Illustrator with "Create PDF Compatible File" enabled.'
-      : 'Could not detect file content.',
-  )
+  return new ConversionError(ext === 'ai' ? 'aiNotPdf' : 'unknownContent')
 }
 
 /** Sanitized, normalized SVG from SVG source text (used for preview and print). */
@@ -221,7 +220,7 @@ export function hashBuffer(buffer) {
 export async function convertUpload(buffer, filename, { page = 0 } = {}) {
   const { ext, kind } = detectFormat(buffer, filename)
   if (!SUPPORTED_EXTENSIONS.includes(ext)) {
-    throw new ConversionError(`File type ".${ext}" is not supported. Allowed: ${SUPPORTED_EXTENSIONS.join(', ')}`, 415)
+    throw new ConversionError('unsupportedType', 415, { ext, allowed: SUPPORTED_EXTENSIONS.join(', ') })
   }
   let result
   switch (kind) {
@@ -257,6 +256,6 @@ export async function convertUpload(buffer, filename, { page = 0 } = {}) {
 /** v0.5/0.6 compatible: returns the SVG directly. */
 export async function convertToSvg(buffer, filename, opts) {
   const r = await convertUpload(buffer, filename, opts)
-  if (r.preview.kind !== 'svg') throw new ConversionError('Graphic too complex for SVG preview.')
+  if (r.preview.kind !== 'svg') throw new ConversionError('tooComplex')
   return { svg: r.preview.svg, width: r.width, height: r.height, sourceFormat: r.sourceFormat, pageCount: r.pageCount, page: r.page }
 }

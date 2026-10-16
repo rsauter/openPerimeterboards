@@ -7,11 +7,12 @@ import { convertUpload, findGhostscript, ConversionError, SUPPORTED_EXTENSIONS }
 import { bannerToPdf } from './pdf.js'
 import { fontIndexSize } from './fonts.js'
 import { createZip } from '../src/lib/zip.js'
+import { msg, pickLang } from './i18n.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const PORT = Number(process.env.PORT) || 3001
 const MAX_UPLOAD_MB = Number(process.env.MAX_UPLOAD_MB) || 25
-const VERSION = '0.7.3'
+const VERSION = '0.8.0'
 
 // The server is stateless: uploads are held in memory only for the duration of a request.
 const app = express()
@@ -30,7 +31,8 @@ app.get('/api/health', async (_req, res) => {
 })
 
 app.post('/api/convert', upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file received in field "file".' })
+  const lang = pickLang(req.headers['accept-language'])
+  if (!req.file) return res.status(400).json({ error: msg(lang, 'noFile') })
   const started = Date.now()
   try {
     const result = await convertUpload(req.file.buffer, req.file.originalname, { page: Number(req.query.page) || 0 })
@@ -40,7 +42,7 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
   } catch (err) {
     const status = err instanceof ConversionError ? err.status : 500
     console.warn(`[convert] ${req.file.originalname} failed: ${err.message}`)
-    res.status(status).json({ error: err.message })
+    res.status(status).json({ error: err instanceof ConversionError ? err.localized(lang) : msg(lang, 'internal') })
   }
 })
 
@@ -54,7 +56,7 @@ function parseExportRequest(req, res, next) {
       Object.assign(req.body, JSON.parse(req.body.project || '{}'))
       next()
     } catch {
-      res.status(400).json({ error: 'Invalid project JSON' })
+      res.status(400).json({ error: msg(pickLang(req.headers['accept-language']), 'invalidProject') })
     }
   })
 }
@@ -99,18 +101,20 @@ app.post('/api/export/pdf', parseExportRequest, async (req, res) => {
   } catch (err) {
     const status = err instanceof ConversionError ? err.status : 500
     console.warn(`[pdf] failed: ${err.stack || err.message}`)
-    res.status(status).json({ error: err.message })
+    const lang = pickLang(req.headers['accept-language'])
+    res.status(status).json({ error: err instanceof ConversionError ? err.localized(lang) : msg(lang, 'internal') })
   }
 })
 
 // multer / generic error handler
-app.use((err, _req, res, _next) => {
-  if (err?.type === 'entity.too.large') return res.status(413).json({ error: 'Banner data too large.' })
+app.use((err, req, res, _next) => {
+  const lang = pickLang(req.headers['accept-language'])
+  if (err?.type === 'entity.too.large') return res.status(413).json({ error: msg(lang, 'bannerTooLarge') })
   if (err?.code === 'LIMIT_FILE_SIZE') {
-    return res.status(413).json({ error: `File too large (max. ${MAX_UPLOAD_MB} MB).` })
+    return res.status(413).json({ error: msg(lang, 'fileTooLarge', { mb: MAX_UPLOAD_MB }) })
   }
   console.error(err)
-  res.status(500).json({ error: 'Internal error' })
+  res.status(500).json({ error: msg(lang, 'internal') })
 })
 
 // serve built frontend in production

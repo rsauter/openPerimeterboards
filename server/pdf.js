@@ -90,7 +90,7 @@ async function resolveGraphics(banner, assets) {
       missing.push(el.name || el.assetId)
     }
   }
-  if (missing.length) throw new ConversionError(`Missing graphic data for: ${missing.join(', ')}. Re-open the project file or upload the graphic again.`, 400)
+  if (missing.length) throw new ConversionError('missingAssets', 400, { list: missing.join(', ') })
   return out
 }
 
@@ -99,7 +99,7 @@ export async function renderPdf(banner, rawOptions, assets = new Map()) {
   const opts = normalizeOptions(rawOptions)
   const W = Number(banner?.width)
   const H = Number(banner?.height)
-  if (!(W > 0 && H > 0) || !Array.isArray(banner.elements)) throw new ConversionError('Invalid banner data', 400)
+  if (!(W > 0 && H > 0) || !Array.isArray(banner.elements)) throw new ConversionError('invalidBanner', 400)
 
   const s = opts.mmPerPx * PT_PER_MM // pt per banner px
   const trimW = W * s
@@ -109,7 +109,7 @@ export async function renderPdf(banner, rawOptions, assets = new Map()) {
   const pageW = trimW + 2 * m
   const pageH = trimH + 2 * m
   if (pageW > 14400 || pageH > 14400) {
-    throw new ConversionError('PDF page would exceed 5.08 m (PDF limit). Reduce the output size.', 400)
+    throw new ConversionError('pageTooLarge', 400)
   }
 
   const graphics = await resolveGraphics(banner, assets)
@@ -256,7 +256,7 @@ export async function renderPdf(banner, rawOptions, assets = new Map()) {
 /** Optional Ghostscript pass: CMYK conversion and/or converting text to outlines. */
 async function ghostscriptPass(buffer, { colorMode, outlineText }) {
   const gs = await findGhostscript()
-  if (!gs) throw new ConversionError('CMYK / text outlines require Ghostscript (see README).', 501)
+  if (!gs) throw new ConversionError('gsRequiredPrint', 501)
   const dir = await mkdtemp(path.join(tmpdir(), 'adgen-pdf-'))
   const input = path.join(dir, 'in.pdf')
   const output = path.join(dir, 'out.pdf')
@@ -270,7 +270,7 @@ async function ghostscriptPass(buffer, { colorMode, outlineText }) {
     return await readFile(output)
   } catch (err) {
     if (err instanceof ConversionError) throw err
-    throw new ConversionError(`Ghostscript post-processing failed: ${err.message.split('\n')[0]}`, 500)
+    throw new ConversionError('gsPostFailed', 500, { detail: err.message.split('\n')[0] })
   } finally {
     rm(dir, { recursive: true, force: true }).catch(() => {})
   }

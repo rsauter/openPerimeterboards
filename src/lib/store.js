@@ -1,6 +1,7 @@
 import { reactive, ref, computed, watch, toRaw } from 'vue'
 import { FONT_FAMILIES } from './presets.js'
 import { APP_VERSION } from './version.js'
+import { t } from '../i18n/index.js'
 import { loadAssets, assetIdsOf, migrateInlineSvgs } from './assets.js'
 import { saveProject, loadProject, listProjects, newProjectId, collectGarbage } from './projects.js'
 import { requestPersistence } from './db.js'
@@ -16,7 +17,7 @@ const uid = (prefix) => `${prefix}_${(idCounter++).toString(36)}`
 function defaultBanner() {
   return {
     id: newProjectId(),
-    name: 'New banner',
+    name: t('defaults.bannerName'),
     unit: 'px', // display unit: 'px' | 'mm' (geometry is always stored in px)
     width: 300,
     height: 250,
@@ -26,9 +27,9 @@ function defaultBanner() {
     fontFamily: FONT_FAMILIES[1].value,
     print: defaultPrint(),
     elements: [
-      makeText({ text: 'Your headline', x: 24, y: 70, fontSize: 30, fontWeight: 700 }),
-      makeText({ text: 'Short subline goes here', x: 24, y: 112, fontSize: 16, fontWeight: 400, color: '#cbd5e1' }),
-      makeText({ text: 'Learn more ›', x: 24, y: 190, fontSize: 18, fontWeight: 700, color: '#38bdf8' }),
+      makeText({ text: t('defaults.headline'), x: 24, y: 70, fontSize: 30, fontWeight: 700 }),
+      makeText({ text: t('defaults.subline'), x: 24, y: 112, fontSize: 16, fontWeight: 400, color: '#cbd5e1' }),
+      makeText({ text: t('defaults.cta'), x: 24, y: 190, fontSize: 18, fontWeight: 700, color: '#38bdf8' }),
     ],
   }
 }
@@ -41,8 +42,8 @@ export function makeText(over = {}) {
   return {
     id: uid('txt'),
     type: 'text',
-    name: over.text ? String(over.text).split('\n')[0].slice(0, 24) : 'Text',
-    text: 'New text',
+    name: over.text ? String(over.text).split('\n')[0].slice(0, 24) : t('props.text'),
+    text: t('defaults.newText'),
     x: 20,
     y: 20,
     fontSize: 24,
@@ -70,7 +71,7 @@ export function makeGraphic({ name, assetId, width, height, sourceFormat }, bann
   return {
     id: uid('gfx'),
     type: 'graphic',
-    name: name || 'Graphic',
+    name: name || t('props.graphic'),
     sourceFormat,
     assetId,
     page: 0,
@@ -191,7 +192,7 @@ export function removeElement(id = selectedId.value) {
 export function duplicateElement(id = selectedId.value) {
   const src = banner.elements.find((e) => e.id === id)
   if (!src) return
-  const copy = { ...structuredClone(toRaw(src)), id: uid(src.type === 'graphic' ? 'gfx' : 'txt'), x: src.x + 10, y: src.y + 10, name: `${src.name} copy` }
+  const copy = { ...structuredClone(toRaw(src)), id: uid(src.type === 'graphic' ? 'gfx' : 'txt'), x: src.x + 10, y: src.y + 10, name: `${src.name} (${t('projects.copy')})` }
   banner.elements.splice(banner.elements.indexOf(src) + 1, 0, copy)
   selectedId.value = copy.id
 }

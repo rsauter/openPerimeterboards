@@ -6,7 +6,7 @@ const props = defineProps({
   modelValue: { type: String, default: null },
   label: String,
   allowInherit: { type: Boolean, default: false },
-  inheritLabel: { type: String, default: 'Default' },
+  inheritLabel: { type: String, default: '' },
   inheritValue: { type: String, default: '#000000' },
 })
 const emit = defineEmits(['update:modelValue'])
@@ -48,7 +48,7 @@ function commitText() {
       <button
         v-if="allowInherit && modelValue"
         class="btn btn-ghost btn-xs"
-        title="Reset to banner default"
+        :title="t('color.reset')"
         @click="emit('update:modelValue', null)"
       >↺</button>
     </div>

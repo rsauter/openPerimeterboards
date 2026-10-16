@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.0 — 2026-10-16
+
+### Added
+- **Multilingual UI: German, French, Italian, English** (switcher in the top bar)
+  - default from the browser language, choice remembered per browser
+  - Swiss conventions (German without «ß», Guillemets), print terms per language
+    (Beschnitt / fond perdu / abbondanza, Schnittmarken / traits de coupe / segni di taglio)
+  - server error messages are localized too (client sends `Accept-Language`)
+  - new banners start with sample texts in the chosen language
+
 ## 0.7.3 — 2026-10-16
 
 ### Added
