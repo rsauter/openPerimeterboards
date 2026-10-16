@@ -1,14 +1,24 @@
 {
   "name": "adbanner-generator",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Ad banner generator – Vue 3, DaisyUI, Express",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsauter/openPerimeterboards.git"
+  },
+  "homepage": "https://github.com/rsauter/openPerimeterboards",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "concurrently -n api,web -c blue,green \"node --watch server/index.js\" \"vite\"",
     "build": "vite build",
     "start": "node server/index.js",
     "preview": "npm run build && npm start"
   },
-  "license": "UNLICENSED",
   "dependencies": {
     "express": "^5.3.0",
     "multer": "^2.4.0",
@@ -25,10 +35,5 @@
     "daisyui": "^5.7.50",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.4"
-  },
-  "private": true,
-  "type": "module",
-  "engines": {
-    "node": ">=20"
   }
 }

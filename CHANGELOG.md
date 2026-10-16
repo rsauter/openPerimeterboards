@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.2 — 2026-10-16
+
+### Added
+- License: **AGPL-3.0-or-later** (`LICENSE`, `package.json`, README) — required by MuPDF
+- Footer link to the source code (AGPL §13 for network use)
+- `docs/DEPLOY-RAILWAY.md`: deployment and operations guide for Railway
+- `fonts/` folder for optional licensed font files
+
+### Fixed
+- Docker runtime image now contains `src/lib` (shared modules imported by the server) — the
+  container failed to start since v0.6
+- Docker image runs as non-root user and has a `HEALTHCHECK`
+
 ## 0.7.1 — 2026-10-16
 
 ### Added

@@ -6,6 +6,7 @@ import {
 } from './lib/store.js'
 import { exportSvg, exportRaster, exportProject } from './lib/export.js'
 import ProjectsDialog from './components/ProjectsDialog.vue'
+import { SOURCE_URL } from './lib/version.js'
 import { fetchHealth } from './lib/api.js'
 import BannerCanvas from './components/BannerCanvas.vue'
 import BannerSettings from './components/BannerSettings.vue'
@@ -220,7 +221,10 @@ const tab = ref('properties')
         <footer class="flex items-center justify-between border-t border-base-300 bg-base-100 px-3 py-1 text-xs opacity-70">
           <span>{{ banner.width }} × {{ banner.height }} px · {{ banner.elements.length }} element(s)</span>
           <span class="hidden md:inline">Drag to move · corner handle to resize · arrows nudge (Shift ×10) · Alt disables snapping</span>
-          <span :class="health ? 'text-success' : 'text-error'">● API {{ health ? 'online' : 'offline' }}</span>
+          <span class="flex items-center gap-3">
+            <a :href="SOURCE_URL" target="_blank" rel="noopener" class="link link-hover" title="Source code (AGPL-3.0)">Source · AGPL-3.0</a>
+            <span :class="health ? 'text-success' : 'text-error'">● API {{ health ? 'online' : 'offline' }}</span>
+          </span>
         </footer>
       </main>
 

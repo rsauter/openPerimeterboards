@@ -1,8 +1,8 @@
-# Adbanner Generator
+# openPerimeterboards – Adbanner Generator
 
 Small web app to compose ad banners in individual sizes — **Node.js · Vue 3 · Tailwind CSS 4 · DaisyUI 5**.
 
-Version **0.7.1** (see [CHANGELOG](CHANGELOG.md)).
+Version **0.7.2** · License **AGPL-3.0-or-later** (see [CHANGELOG](CHANGELOG.md)).
 
 ## Features (v0.5)
 
@@ -107,6 +107,12 @@ docker build -t adbanner-generator .
 docker run -p 3001:3001 adbanner-generator
 ```
 
+The image contains Ghostscript (EPS, CMYK) and Liberation/DejaVu fonts. Optional licensed fonts go into `fonts/`.
+
+## Deployment on Railway
+
+See [docs/DEPLOY-RAILWAY.md](docs/DEPLOY-RAILWAY.md) — one stateless container, no volume or database, about 5 USD/month.
+
 ## Project structure
 
 ```
@@ -162,3 +168,18 @@ src/
 - Batch export: one design → multiple sizes (responsive layout rules)
 - Templates / brand presets (Quickline colors & logos)
 - File-size budget check for ad networks (e.g. ≤ 150 KB)
+
+## License
+
+Copyright (C) 2026 Roger Sauter
+
+This program is free software: you can redistribute it and/or modify it under the terms of the
+**GNU Affero General Public License** as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version. See [LICENSE](LICENSE).
+
+AGPL was chosen because the PDF engine [MuPDF](https://mupdf.com) (`mupdf` npm package) is AGPL-3.0.
+If you run a modified version as a network service, you must offer its source code to the users
+(the app links to the source in its footer).
+
+Third-party components: Vue (MIT), Tailwind CSS (MIT), daisyUI (MIT), Express (MIT), multer (MIT),
+PDFKit (MIT), svg-to-pdfkit (MIT), pdf-lib (MIT), MuPDF (AGPL-3.0), Ghostscript (AGPL-3.0, separate binary).
